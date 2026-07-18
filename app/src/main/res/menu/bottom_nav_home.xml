@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_daily_task"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="@string/title_daily_task" />
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:title="@string/title_calendar" />
+    <item
+        android:id="@+id/nav_todo"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="@string/title_todo" />
+    <item
+        android:id="@+id/nav_notepad"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/title_notepad" />
+    <item
+        android:id="@+id/nav_daycounter"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="@string/title_daycounter" />
+    <item
+        android:id="@+id/nav_creditdebt"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="@string/title_creditdebt" />
+</menu>

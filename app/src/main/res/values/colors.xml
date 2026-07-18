@@ -1,0 +1,11 @@
+<resources>
+    <color name="background_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
+    <color name="purple_primary">#7C4DFF</color>
+    <color name="purple_dark">#5E35B1</color>
+    <color name="teal_accent">#1DE9B6</color>
+    <color name="green_success">#43A047</color>
+    <color name="red_error">#E53935</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+</resources>

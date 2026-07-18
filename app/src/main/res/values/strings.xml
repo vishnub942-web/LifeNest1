@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LifeNest</string>
+    <string name="title_home">Home</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_daily_task">Daily Task</string>
+    <string name="title_calendar">Task Calendar</string>
+    <string name="title_todo">To Do</string>
+    <string name="title_notepad">Notepad</string>
+    <string name="title_daycounter">Day Counter</string>
+    <string name="title_creditdebt">Credit / Debt</string>
+</resources>
