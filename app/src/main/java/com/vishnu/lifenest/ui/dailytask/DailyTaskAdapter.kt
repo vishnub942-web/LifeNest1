@@ -1,7 +1,5 @@
 package com.vishnu.lifenest.ui.dailytask
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +13,12 @@ import com.vishnu.lifenest.data.TaskStatus
 import com.vishnu.lifenest.data.TaskWithEntry
 import com.vishnu.lifenest.util.TimeUtils
 
+/**
+ * IMPORTANT: We only push edits (name/time/remarks) to the database when the
+ * user leaves that field (focus lost), NOT on every keystroke. Saving on every
+ * keystroke was causing the row to refresh mid-typing, which reset the cursor
+ * to the start and scrambled the text (e.g. "happy" -> "yppah").
+ */
 class DailyTaskAdapter(
     private val onStatusTap: (TaskWithEntry) -> Unit,
     private val onTimeChanged: (TaskWithEntry, String?, String?) -> Unit,
@@ -23,7 +27,6 @@ class DailyTaskAdapter(
     private val onLongPress: (TaskWithEntry) -> Unit = {}
 ) : ListAdapter<TaskWithEntry, DailyTaskAdapter.RowHolder>(DIFF) {
 
-    // tracks AM/PM per row locally, keyed by taskId
     private val startIsAm = HashMap<Long, Boolean>()
     private val endIsAm = HashMap<Long, Boolean>()
 
@@ -43,18 +46,6 @@ class DailyTaskAdapter(
         holder.bind(getItem(position))
     }
 
-    /** Sets a text watcher that replaces any previous one set via this helper (avoids duplicate callbacks on recycled rows). */
-    private fun EditText.setChangeListener(action: (String) -> Unit) {
-        (tag as? TextWatcher)?.let { removeTextChangedListener(it) }
-        val watcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) = action(s?.toString() ?: "")
-        }
-        addTextChangedListener(watcher)
-        tag = watcher
-    }
-
     inner class RowHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val editName: EditText = itemView.findViewById(R.id.edit_task_name)
         private val textStatus: TextView = itemView.findViewById(R.id.text_status)
@@ -67,9 +58,15 @@ class DailyTaskAdapter(
 
         fun bind(item: TaskWithEntry) {
             itemView.setOnLongClickListener { onLongPress(item); true }
-            editName.setText(item.taskName)
-            editName.setChangeListener { text -> onNameChanged(item, text) }
 
+            // --- Task name ---
+            editName.setText(item.taskName)
+            editName.onFocusChangeListener = null
+            editName.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) onNameChanged(item, editName.text.toString())
+            }
+
+            // --- Status ---
             textStatus.text = when (item.status) {
                 TaskStatus.DONE -> "✅"
                 TaskStatus.MISSED -> "❌"
@@ -77,6 +74,7 @@ class DailyTaskAdapter(
             }
             textStatus.setOnClickListener { onStatusTap(item) }
 
+            // --- Start / End time digits ---
             val startDigits = item.startTime?.substringBefore(" ")?.replace(":", "") ?: ""
             val endDigits = item.endTime?.substringBefore(" ")?.replace(":", "") ?: ""
             editStart.setText(startDigits)
@@ -98,13 +96,19 @@ class DailyTaskAdapter(
                 pushTimeUpdate(item)
             }
 
-            editStart.setChangeListener { pushTimeUpdate(item) }
-            editEnd.setChangeListener { pushTimeUpdate(item) }
+            editStart.onFocusChangeListener = null
+            editStart.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) pushTimeUpdate(item) }
+            editEnd.onFocusChangeListener = null
+            editEnd.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) pushTimeUpdate(item) }
 
             textSpent.text = TimeUtils.minutesToLabel(item.spentMinutes)
 
+            // --- Remarks ---
             editRemarks.setText(item.remarks ?: "")
-            editRemarks.setChangeListener { text -> onRemarksChanged(item, text) }
+            editRemarks.onFocusChangeListener = null
+            editRemarks.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) onRemarksChanged(item, editRemarks.text.toString())
+            }
         }
 
         private fun pushTimeUpdate(item: TaskWithEntry) {

@@ -3,7 +3,9 @@ package com.vishnu.lifenest.ui.dailytask
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -16,6 +18,7 @@ import com.vishnu.lifenest.R
 import com.vishnu.lifenest.data.TaskWithEntry
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 class DailyTaskFragment : Fragment() {
 
@@ -36,6 +39,8 @@ class DailyTaskFragment : Fragment() {
         val recycler = view.findViewById<RecyclerView>(R.id.recycler_daily_tasks)
         val dateHeader = view.findViewById<TextView>(R.id.text_date_header)
         val addButton = view.findViewById<View>(R.id.btn_add_task)
+        val prevButton = view.findViewById<View>(R.id.btn_prev_day)
+        val nextButton = view.findViewById<View>(R.id.btn_next_day)
 
         adapter = DailyTaskAdapter(
             onStatusTap = { item -> viewModel.cycleStatus(item) },
@@ -49,7 +54,7 @@ class DailyTaskFragment : Fragment() {
 
         viewModel.selectedDate.observe(viewLifecycleOwner) { dateStr ->
             val parsed = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(dateStr)
-            dateHeader.text = if (parsed != null) "Daily Tasks - ${displayFormat.format(parsed)}" else "Daily Tasks"
+            dateHeader.text = if (parsed != null) displayFormat.format(parsed) else dateStr
         }
 
         viewModel.tasksForDate.observe(viewLifecycleOwner) { list ->
@@ -57,6 +62,28 @@ class DailyTaskFragment : Fragment() {
         }
 
         addButton.setOnClickListener { showAddTaskDialog() }
+        prevButton.setOnClickListener { viewModel.shiftDay(-1) }
+        nextButton.setOnClickListener { viewModel.shiftDay(1) }
+
+        // Swipe left/right anywhere on the task list to move between days.
+        val gestureDetector = GestureDetector(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                if (e1 == null) return false
+                val dx = e2.x - e1.x
+                val dy = e2.y - e1.y
+                if (abs(dx) > abs(dy) && abs(dx) > 100 && abs(velocityX) > 200) {
+                    if (dx > 0) viewModel.shiftDay(-1) else viewModel.shiftDay(1)
+                    return true
+                }
+                return false
+            }
+        })
+        recycler.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                gestureDetector.onTouchEvent(e)
+                return false
+            }
+        })
     }
 
     private fun showAddTaskDialog() {

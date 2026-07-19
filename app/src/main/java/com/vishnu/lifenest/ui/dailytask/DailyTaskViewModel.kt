@@ -13,7 +13,8 @@ import java.util.*
 
 class DailyTaskViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: TaskRepository
+    private val repository: TaskRepository =
+        TaskRepository(AppDatabase.getInstance(application).taskDao())
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     private val _selectedDate = MutableLiveData(dateFormat.format(Date()))
@@ -23,13 +24,16 @@ class DailyTaskViewModel(application: Application) : AndroidViewModel(applicatio
         repository.getTasksForDate(date)
     }
 
-    init {
-        val dao = AppDatabase.getInstance(application).taskDao()
-        repository = TaskRepository(dao)
-    }
-
     fun setDate(date: String) {
         _selectedDate.value = date
+    }
+
+    fun shiftDay(deltaDays: Int) {
+        val current = dateFormat.parse(_selectedDate.value ?: dateFormat.format(Date())) ?: Date()
+        val cal = Calendar.getInstance()
+        cal.time = current
+        cal.add(Calendar.DAY_OF_MONTH, deltaDays)
+        _selectedDate.value = dateFormat.format(cal.time)
     }
 
     fun addTask(name: String) {

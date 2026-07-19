@@ -9,7 +9,8 @@ import java.util.*
 
 class TaskCalendarViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: TaskRepository
+    private val repository: TaskRepository =
+        TaskRepository(AppDatabase.getInstance(application).taskDao())
     private val dateFmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     private val monthFmt = SimpleDateFormat("yyyy-MM", Locale.US)
 
@@ -33,8 +34,6 @@ class TaskCalendarViewModel(application: Application) : AndroidViewModel(applica
     val highlightedDates: LiveData<Set<String>> = _highlightedDates
 
     init {
-        val dao = AppDatabase.getInstance(application).taskDao()
-        repository = TaskRepository(dao)
         refreshCompletionReport()
     }
 

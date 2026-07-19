@@ -6,13 +6,21 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [TaskEntity::class, TaskEntryEntity::class],
-    version = 1,
+    entities = [
+        TaskEntity::class, TaskEntryEntity::class,
+        ToDoEntity::class, NoteEntity::class,
+        EventEntity::class, LedgerEntity::class
+    ],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
+    abstract fun toDoDao(): ToDoDao
+    abstract fun noteDao(): NoteDao
+    abstract fun eventDao(): EventDao
+    abstract fun ledgerDao(): LedgerDao
 
     companion object {
         @Volatile
@@ -24,7 +32,11 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "lifenest.db"
-                ).build()
+                )
+                    // Early-stage app: on schema changes, reset local data rather than
+                    // writing migrations. Fine for now; revisit before a real release.
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

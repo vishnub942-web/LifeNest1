@@ -34,6 +34,7 @@ class TaskCalendarFragment : Fragment() {
 
     private var currentHighlighted: Set<String> = emptySet()
     private var currentSelected: String = ""
+    private var highlightedTaskId: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -176,13 +177,27 @@ class TaskCalendarFragment : Fragment() {
         for (item in list) {
             val row = LinearLayout(requireContext())
             row.orientation = LinearLayout.HORIZONTAL
-            row.setPadding(0, 10, 0, 10)
+            row.setPadding(12, 10, 12, 10)
+            val isSelected = item.taskId == highlightedTaskId
+            if (isSelected) {
+                row.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple_dark))
+            }
 
             val name = TextView(requireContext())
             name.text = item.taskName
-            name.setTextColor(ContextCompat.getColor(requireContext(), R.color.purple_primary))
+            name.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (isSelected) R.color.teal_accent else R.color.purple_primary
+                )
+            )
+            if (isSelected) name.setTypeface(name.typeface, android.graphics.Typeface.BOLD)
             name.layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-            name.setOnClickListener { viewModel.highlightTaskDates(item.taskId) }
+            name.setOnClickListener {
+                highlightedTaskId = item.taskId
+                viewModel.highlightTaskDates(item.taskId)
+                renderCompletionReport(list)
+            }
 
             val count = TextView(requireContext())
             val total = if (item.totalDaysSoFar > 0) item.totalDaysSoFar else 1

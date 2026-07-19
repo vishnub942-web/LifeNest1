@@ -4,7 +4,10 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="6dp"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="@drawable/row_bottom_border"
+    android:divider="@drawable/cell_divider"
+    android:showDividers="middle">
 
     <EditText
         android:id="@+id/edit_task_name"
@@ -15,7 +18,9 @@
         android:textColorHint="@color/text_secondary"
         android:background="@null"
         android:hint="Task name"
-        android:inputType="text" />
+        android:inputType="text"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
 
     <TextView
         android:id="@+id/text_status"
@@ -94,6 +99,8 @@
         android:layout_height="wrap_content"
         android:textColor="@color/text_primary"
         android:background="@null"
-        android:hint="Remarks" />
+        android:hint="Remarks"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
 
 </LinearLayout>

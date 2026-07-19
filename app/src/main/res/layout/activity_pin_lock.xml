@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/background_dark"
+    android:padding="32dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LifeNest Locked"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+
+    <EditText
+        android:id="@+id/edit_pin_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberPassword"
+        android:hint="Enter PIN"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:letterSpacing="0.3" />
+
+    <TextView
+        android:id="@+id/text_pin_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Incorrect PIN, try again"
+        android:textColor="@color/red_error"
+        android:visibility="invisible"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_unlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Unlock"
+        android:backgroundTint="@color/purple_primary"
+        android:layout_marginTop="20dp" />
+
+</LinearLayout>
