@@ -75,9 +75,11 @@ class SettingsFragment : Fragment() {
         Toast.makeText(requireContext(), "Font size updated. Reopening LifeNest to apply it...", Toast.LENGTH_SHORT).show()
         // Restart the app so the new font scale takes effect everywhere (icons resized too).
         val intent = requireActivity().packageManager.getLaunchIntentForPackage(requireActivity().packageName)
-        intent?.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        requireActivity().finish()
+        if (intent != null) {
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            requireActivity().finish()
+        }
     }
 
     private fun showSetPinDialog(switchSetPin: Switch) {
