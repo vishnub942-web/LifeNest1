@@ -6,11 +6,10 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.vishnu.lifenest.ui.home.HomeFragment
 import com.vishnu.lifenest.ui.settings.SettingsFragment
+import com.vishnu.lifenest.util.LockState
 import com.vishnu.lifenest.util.Prefs
 
 class MainActivity : BaseActivity() {
-
-    private var pinCheckLauncherUsed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +34,9 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (Prefs.pinEnabled(this) && !Prefs.pinCode(this).isNullOrBlank() && !pinCheckLauncherUsed) {
-            pinCheckLauncherUsed = true
+        if (Prefs.pinEnabled(this) && !Prefs.pinCode(this).isNullOrBlank() && !LockState.unlocked) {
             startActivity(Intent(this, PinLockActivity::class.java))
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        pinCheckLauncherUsed = false
     }
 
     private fun loadFragment(fragment: Fragment) {
