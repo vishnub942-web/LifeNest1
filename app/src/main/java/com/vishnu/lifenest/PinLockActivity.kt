@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.vishnu.lifenest.util.LockState
 import com.vishnu.lifenest.util.Prefs
 
 class PinLockActivity : BaseActivity() {
@@ -21,6 +22,7 @@ class PinLockActivity : BaseActivity() {
             val entered = editPin.text.toString()
             val saved = Prefs.pinCode(this)
             if (entered.isNotBlank() && entered == saved) {
+                LockState.unlocked = true
                 finish()
             } else {
                 textError.visibility = TextView.VISIBLE
